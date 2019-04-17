@@ -1,0 +1,17 @@
+#!/bin/bash
+# My first script"
+SCHEMA="public"
+DB="partisan_data"
+
+psql -Atc "select tablename from pg_tables where schemaname='$SCHEMA'" $DB |\
+  while read TBL; do
+    echo "Exporting" $TBL
+    psql -c "COPY $SCHEMA.$TBL TO STDOUT WITH CSV" $DB > $TBL.csv
+    echo  "Creating tar"
+    tar -cvzf $TBL.tar.gz $TBL.csv
+    echo "Transfering to s3"
+    aws s3 cp $TBL.tar.gz s3://knn-1000/
+    echo "Removing files"
+    sudo rm $TBL.tar.gz
+    sudo rm $TBL.csv
+  done
