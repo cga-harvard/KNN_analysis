@@ -16,9 +16,28 @@ A commonly encountered problem in spatial world is finding the KNN of the point 
 
 Our system works by evaluating distances between bounding boxes inside the PostGIS R-Tree index. It is a pure index based nearest neighbour search. By walking up and down the index, the search can find the nearest candidate geometries without using any magical search radius numbers, so the technique is suitable and high performance even for very large tables with highly variable data densities. The distance operator is used in the ORDER BY clause to make use of the DB indexes. Between putting the operator in the ORDER BY and using a LIMIT to truncate the result set, we can very very quickly get the KNN points to our test point. Because it is traversing the index, which is made of bounding boxes, the distance operator only works with bounding boxes. For point data, the bounding boxes are equivalent to the points, so the answers are exact. Using the distance operator, ones get the nearest neighbour using the centers of the bounding boxes to calculate the inter-object distances. The script works only on PostGIS 2.0 with PostgreSQL 9.1 or greater. The calculation was done in chunks of 2 million voters to enable stage II calculation of weighted aggregates in R. For states with population greater than 2 million voters, the dataset is divided into smaller chunks of 2 million using group id. 
 
+## Compression and storage on S3
+
 One key compoonent was storage and compression of the resultant 180 billion dataset to minimize cost. Several optimization techiniques were used and 87% compression in PostGIS dump was obtained using the pg_dump method with "-FC" as the optimization parater,
 
 An Amazon AMI was built to facilitate firing of multiple EC2 instances to run the computation in parallel for 180 million voters. The AMI enables replication of the entire computation enevironment. Whenthe AMI is launced, the instance is ready to be used with the DB indexed, scripts loaded and libraries pre-installed. 
+
+
+## Amazon AMI
+
+An Amazon AMI was built to facilitate firing of multiple EC2 instances to run the computation in parallel for 180 million voters. The AMI enables replication of the entire computation enevironment. Whenthe AMI is launced, the instance is ready to be used with the DB indexed, scripts loaded and libraries pre-installed. The following steps should be followed in using the AMI:
+
+1. Go the AMI tab on the AWS dashboard
+2. Click on Lauch
+3. Select EC2 instance type as "m4.xlarge"
+4. Select the pem key as "map_post_parseg.pem"
+5. Once the EC2 instance is launched connect to the pre-existing and pre-indexed DB using:
+    psql -h localhost -U brownenos partisan_data
+
+
+
+
+
 
 
 
