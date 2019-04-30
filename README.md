@@ -32,7 +32,10 @@ An Amazon AMI was built to facilitate firing of multiple EC2 instances to run th
 3. Select EC2 instance type as "m4.xlarge"
 4. Select the pem key as "map_post_parseg.pem"
 5. Once the EC2 instance is launched connect to the pre-existing and pre-indexed DB using:
-    psql -h localhost -U brownenos partisan_data
+                                                                                                                                                               
+                                                                                                                                                            ```psql -h localhost -U brownenos partisan_data```
+                                                                                                                                                                
+                                                                                                                                                                
 
 
 
