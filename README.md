@@ -24,7 +24,7 @@ https://s3.console.aws.amazon.com/s3/home?region=us-east-1
 
 
 
-## Amazon AMI
+## Running the script
 
 An Amazon AMI was built to facilitate firing of multiple EC2 instances to run the computation in parallel for 180 million voters. The AMI enables replication of the entire computation enevironment. Whenthe AMI is launced, the instance is ready to be used with the DB indexed, scripts loaded and libraries pre-installed. The following steps should be followed in using the AMI:
 
