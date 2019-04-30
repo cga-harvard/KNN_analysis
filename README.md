@@ -37,6 +37,7 @@ An Amazon AMI was built to facilitate firing of multiple EC2 instances to run th
 6. Enter the DB password when prompted to enter the DB
 7. The us_voters table is pre-exists and is indexed approriately to run the script
 8. Run the SQL by changing the state abbreviation by appropriate state for which the calculation is done.
+9. Run the export script to export and compress the DB and transfer to S3
 
 
 
