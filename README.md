@@ -1,4 +1,20 @@
-# KNN_analysis
-Ryan Enos' project on KNN analysis
+# Nationwide Individual Partisan Clustering Analysis
+## Introduction
 
-One of the most commonly encountered problems in PostGIS is “how do I find the N nearest things to this point?”. The answer to this problem is not straighforward. 
+The CGA worked with professor Ryan Enos and graduate student Jake Brown to develope a large-scale geospatial processing and analytic capability to support an investigation into the effect of geography on partisanship in the United States by, which takes a new more detailed look at the well-known phenomenon of partisan geographic sorting.  
+
+A consensus is building among scholars that even if sorting itself is not driven by partisanship, partisans in the United States—and some other countries—are increasingly geographically segregated.  This project takes advantage of a new, individual-level, dataset to explore micro-patterns of segregation across the entire United States: a breadth of coverage and level of detail not previously possible with the study of social segregation using other groups. 
+
+For this project a detailed voter dataset was used to construct individual levels of partisan exposure at several approximated geographies for each voter in US, by calculating aggregate measures of partisan segregation at the individual voter level.   This was accomplished by performing k-means clustering on a voter dataset of 180 million,  with k=1000.  To support the hundreds of billions of calculations required, the CGA built a custom platform consisting of several m4.xlarge Amazon EC2 instances running PostGIS and launched using a special AMI. 
+
+Several optimization techniques were used to make the problem tractable, including geo-hashing and indexing, to enable the normally slow nearest neighbor distance calculations to be scaled up to 100,000 distance calculations per second on a dataset , resulting in a k-means dataset of 180 billion records.  Despite the high level of performance and the large data storage requirements, costs were kept low by building the platform from scratch just-in-time, and by using creative compression techniques.
+
+
+## KNN Calculations 
+
+A commonly encountered problem in spatial world is finding the KNN of the point of interest. Unlike a distance search, the “nearest neighbour” search doesn’t include any measurement restricting how far away candidate geometries might be. This poses a problem for traditional index-assisted queries, that require a search box, and therefore need some kind of measurement value to build the box. The naive way to carry out a nearest neighbour query is to order the candidate table by distance from the query geometry, and then take the record with the smallest distance. The trouble with this approach is that it forces the database to calculate the distance between the query geometry and every feature in the table of candidate features, then sort them all. For a large table of candidate features, it is not a reasonable approach. One way to improve performance is to add an index constraint to the search. The trouble is finding the magic number for a very large database that defines the smallest box to search around the query geometry.
+
+Our system works by evaluating distances between bounding boxes inside the PostGIS R-Tree index. It is a pure index based nearest neighbour search. By walking up and down the index, the search can find the nearest candidate geometries without using any magical search radius numbers, so the technique is suitable and high performance even for very large tables with highly variable data densities. The <-> operator is used in the ORDER BY clause. The <-> is a “distance” operator, but it only makes use of the index when it appears in the ORDER BY clause. Between putting the operator in the ORDER BY and using a LIMIT to truncate the result set, we can very very quickly  get the KNN points to our test point. Because it is traversing the index, which is made of bounding boxes, the distance operator only works with bounding boxes. For point data, the bounding boxes are equivalent to the points, so the answers are exact.Using the <-> operator, you get the nearest neighbour using the centers of the bounding boxes to calculate the inter-object distances. The script works only on PostGIS 2.0 with PostgreSQL 9.1 or greater. 
+
+## Building the AMI
+
