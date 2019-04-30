@@ -18,9 +18,10 @@ Our system works by evaluating distances between bounding boxes inside the PostG
 
 ## Compression and storage on S3
 
-One key compoonent was storage and compression of the resultant 180 billion dataset to minimize cost. Several optimization techiniques were used and 87% compression in PostGIS dump was obtained using the pg_dump method with "-FC" as the optimization parater,
+One key compoonent was storage and compression of the resultant 180 billion dataset to minimize cost. Several optimization techiniques were used and 87% compression in PostGIS dump was obtained using the pg_dump method with "-FC" as the optimization parameter. The compressed dump were stored on Amazon S3 under the knn-1000 bucket:
 
-An Amazon AMI was built to facilitate firing of multiple EC2 instances to run the computation in parallel for 180 million voters. The AMI enables replication of the entire computation enevironment. Whenthe AMI is launced, the instance is ready to be used with the DB indexed, scripts loaded and libraries pre-installed. 
+https://s3.console.aws.amazon.com/s3/home?region=us-east-1
+
 
 
 ## Amazon AMI
@@ -33,11 +34,11 @@ An Amazon AMI was built to facilitate firing of multiple EC2 instances to run th
 4. Select the pem key as "map_post_parseg.pem"
 5. Once the EC2 instance is launched connect to the pre-existing and pre-indexed DB using:                                                                                                                                                    ```                                                                                                                                            psql -h localhost -U brownenos partisan_data
                                                                                                                                                           ```
-         
-   
 6. Enter the DB password when prompted to enter the DB
 7. The us_voters table is pre-exists and is indexed approriately to run the script
-8. Run the script knn_small.sql for states with population less than 2 million and knn_large.sql for states with population greater than 2 million.
+8. Run the SQL by changing the state abbreviation by appropriate state for which the calculation is done.
+
+
 
 
 
