@@ -16,15 +16,9 @@ A commonly encountered problem in spatial world is finding the KNN of the point 
 
 Our system works by evaluating distances between bounding boxes inside the PostGIS R-Tree index. It is a pure index based nearest neighbour search. By walking up and down the index, the search can find the nearest candidate geometries without using any magical search radius numbers, so the technique is suitable and high performance even for very large tables with highly variable data densities. The distance operator is used in the ORDER BY clause to make use of the DB indexes. Between putting the operator in the ORDER BY and using a LIMIT to truncate the result set, we can very very quickly get the KNN points to our test point. Because it is traversing the index, which is made of bounding boxes, the distance operator only works with bounding boxes. For point data, the bounding boxes are equivalent to the points, so the answers are exact. Using the distance operator, ones get the nearest neighbour using the centers of the bounding boxes to calculate the inter-object distances. The script works only on PostGIS 2.0 with PostgreSQL 9.1 or greater. The calculation was done in chunks of 2 million voters to enable stage II calculation of weighted aggregates in R. For states with population greater than 2 million voters, the dataset is divided into smaller chunks of 2 million using group id. 
 
-## Compression and storage on S3
-
 One key compoonent was storage and compression of the resultant 180 billion dataset to minimize cost. Several optimization techiniques were used and 87% compression in PostGIS dump was obtained using the pg_dump method with "-FC" as the optimization parameter. The compressed dump were stored on Amazon S3 under the knn-1000 bucket:
 
 https://s3.console.aws.amazon.com/s3/home?region=us-east-1
-
-
-
-## Running the script
 
 An Amazon AMI was built to facilitate firing of multiple EC2 instances to run the computation in parallel for 180 million voters. The AMI enables replication of the entire computation enevironment. Whenthe AMI is launced, the instance is ready to be used with the DB indexed, scripts loaded and libraries pre-installed. The following steps should be followed in using the AMI:
 
