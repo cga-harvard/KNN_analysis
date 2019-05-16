@@ -34,6 +34,35 @@ An Amazon AMI was built to facilitate firing of multiple EC2 instances to run th
 9. Run the export script to export and compress the DB and transfer to S3
 
 
+## Using OmniSci for weight calculations
+
+- Log onto SQL Editor on Immerse: http://52.168.111.218:6273/#/sql-editor?_k=zboapp
+- Log on the backend server: ssh -i mapd-azure.pem mapdadmin@52.168.111.218
+- Pem file mapd-azure.pem send on email
+- After login, Issue the following command on the terminal
+-- Activate the conda environment for the project ```conda activate foss4gsandiego```
+-- Go to script directory: ``` cd Partisan-Analysis ```
+-- Run the python script to load table from AWS S3 to OmniSci table: ```time python partisan.py {file name of data to be uploaded} ``` e.g. ```time python partisan.py knn_1000_ca1```
+This command will get the knn_1000_ca1.tar.gz from S3 and upoload the data in table named "knn_1000_ca1" in Omnisci. Once the script has completed the table can be  viewed in the Omnisci datamanager at http://52.168.111.218:6273/#/data-manager?_k=uctahy
+
+This step is done once and then the analysis can be run several times on this loaded data.
+Note: "time" in the command will give the total time taken to run the script
+
+-- Run the analysis script: ``` time python analysis.py {name of result table} {value of parameter c} {value of parameter a} {name of input table}``` e.g. `` time python analysis.py knn_results_ca1 2 4 knn_1000_ca1 ```
+
+This command will take the input table knn_1000_ca1 and output the weight average for Republic and democrats using c=2 and a=4 in output table knn_results_ca1 in columns weightedAverage_republican and weightedAverage_democrat. 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
