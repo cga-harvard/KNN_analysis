@@ -51,6 +51,14 @@ Here are the steps for using the AMI:
 
 ## Using OmniSci for weight calculations
 
+## Introduction
+
+Initially the calculation of partisan weights was done in R. The application was scaled using parallel processing. It took about 10-12 mins to load the data and another 8 minutes to calculate the weights for every 2 billion dataset.
+The idea was to reduce this time using the GPU based processing power of OmniSci. To do this, we initially used the CUDF library to upload the data to GPU dataframes and process them on OmniSci server. However, loading the data to CUDF is a time consuming process so we decided to calculate the weight directly on GPU database on Omnisci busing Mapdql. The data uploads takes about 10-12 minutes which is same as R but the trade-off here is
+
+
+## Procedure
+
 - Log onto SQL Editor on Immerse: http://52.168.111.218:6273/#/sql-editor?_k=zboapp
 
 - Log on the backend server: ssh -i mapd-azure.pem mapdadmin@52.168.111.218
