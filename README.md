@@ -24,8 +24,7 @@ Determining the right clustering scheme to use can be tricky, but a general rule
 
 There is not a balanced R-Tree algorithm available in PostGIS, but there is a useful proxy that puts spatial data into a spatially autocorrelated order, the ST_GeoHash() function.
 
-A Geohash encodes a point into a text form that is sortable and searchable based on prefixing. It divides space into buckets of grid shape. We have used Geohash to cluster the data such that spatially coherent records lie close to each other on the disk. To cluster on the Geohash function, we first created a Geohash index on the data and then applied the CLUSTER function available in PostGIS. An important aspect of this technique is choosing the length of the Geohash string. The precision increases with the length. A shorter Geohash is a less precise representation of a point. It can also be thought of as a box, that contains the actual point. It turns out that 10 characters is ideal, being 5% faster than the full length Geohash of 12 characters. Using 10 chars also doesn’t impact the quality of the resulting order, since 12 characters have only 0.02% more unique hashes on a planet-wide dataset. Shorter lengths have fewer hashes; for example 8 characters have 23% fewer hashes. This made our SQL about 15% faster. For more on Clustering in PostGIS see https://postgis.net/workshops/postgis-intro/clusterindex.html. 
-
+A Geohash encodes a point into a text form that is sortable and searchable based on prefixing. It divides space into buckets of grid shape. We have used Geohash to cluster the data such that spatially coherent records lie close to each other on the disk. To cluster on the Geohash function, we first created a Geohash index on the data and then applied the CLUSTER function available in PostGIS. An important aspect of this technique is choosing the length of the Geohash string. The precision increases with the length. A shorter Geohash is a less precise representation of a point. It can also be thought of as a box, that contains the actual point. It turns out that 10 characters is ideal, being 5% faster than the full length Geohash of 12 characters. Using 10 chars also doesn’t impact the quality of the resulting order, since 12 characters have only 0.02% more unique hashes on a planet-wide dataset. Shorter lengths have fewer hashes; for example 8 characters have 23% fewer hashes. This made our SQL about 15% faster. 
 
 
 Once the data was clustered by Geohash, our KNN script could start the nearest neighbor computation. The script works by evaluating distances between bounding boxes inside the PostGIS R-Tree index. It is a pure index based nearest neighbor search. By walking up and down the index, the search can find the nearest candidate geometries without using any magical search radius numbers, so the technique is suitable and high performance even for very large tables with highly variable data densities. The distance operator is used in the ORDER BY clause to make use of the DB indexes. Between putting the operator in the ORDER BY and using a LIMIT to truncate the result set, we can very quickly get the KNN points to our test point. Because it is traversing the index, which is made of bounding boxes, the distance operator only works with bounding boxes. For point data, the bounding boxes are equivalent to the points, so the answers are exact. Using the distance operator, one gets the nearest neighbor using the centers of the bounding boxes to calculate the inter-object distances. It works only on PostGIS 2.0 with PostgreSQL 9.1 or greater.
@@ -53,8 +52,9 @@ Here are the steps for using the AMI:
 
 ## Introduction
 
-Initially the calculation of partisan weights was done in R. The application was scaled using parallel processing. It took about 10-12 mins to load the data and another 8 minutes to calculate the weights for every 2 billion dataset.
-The idea was to reduce this time using the GPU based processing power of OmniSci. To do this, we initially used the CUDF library to upload the data to GPU dataframes and process them on OmniSci server. However, loading the data to CUDF is a time consuming process so we decided to calculate the weight directly on GPU database on Omnisci busing Mapdql. The data uploads takes about 10-12 minutes which is same as R but the trade-off here is
+Initially the calculation of partisan weights was done in R. The application was scaled using parallel processing with each process calculating chiunks of 2 billion. It took about 10-12 mins to load the data and another 8 minutes to calculate the weights for every chunk.
+
+The idea was to reduce this time using the GPU based processing power of OmniSci in order to facilitate fast tuning of model paramters as wells as quick comaprison between various models. To do this, we initially used the CUDF library to upload the data to GPU dataframes using pymapd and then process them on OmniSci server. However, loading the data to CUDF is a time consuming process and since our analysis could be done directly using database tables so we decided to skip python altogether and calculate the weight directly on Omnisci server by using Mapdql. The data uploads takes about 10-12 minutes for every 2 billion which is same as R but the trade-off here is the computation speed Omnisci provides over R which is about 2.5 seconds comapred to 8 min in R. Moreover, The data upload is a one time process in Omnisci compared to multiple loadings in R and after the upload in OmniSci the user can test various model parameters and compare different model at an incredibly fast rate. 
 
 
 ## Procedure
@@ -82,6 +82,15 @@ The idea was to reduce this time using the GPU based processing power of OmniSci
 
   This command will take the input table **knn_1000_ca1** and output the weight average for Republic and democrats using **c=2** and **a=4** in output table **knn_results_ca1** in columns **weightedAverage_republican** & **weightedAverage_democrat**. 
 
+References:
+
+- For more on Clustering in PostGIS see https://postgis.net/workshops/postgis-intro/clusterindex.html. 
+
+- For more on KNN in PostGIS see  https://postgis.net/workshops/postgis-intro/knn.html
+
+- For more on Geohash see https://postgis.net/docs/ST_GeoHash.html
+
+- For more on Omnisci - https://www.omnisci.com
 
 
 
