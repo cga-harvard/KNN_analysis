@@ -1,10 +1,15 @@
-Create table NY5 as (select id,pid,geom,grp from us_voters_grp where grp= 'NY5');
+### Create table NY5 as (select id,pid,geom,grp from us_voters_grp where grp= 'NY5');
+
+Create table NY5 as (select id,pid,geom,grp,geohash from us_voters_grp where grp= 'NY5');
 
 Alter table NY5 Add column row_id Serial primary key;
 
 Create index NY5_gix on NY5 using gist(geom);
 
-Create index NY5_id on NY5(id);
+#Create index NY5_id on NY5(id);
+
+Create index geohash_gix on NY5(geohash);
+CLUSTER NY5 USING geohash-gix;
 
 Create table knn_1000_NY5 (source_id character varying(255), neighbor_id character varying(255), neighbor_pid character varying(255),dist float);
 
