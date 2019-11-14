@@ -93,7 +93,12 @@ References:
 - For more on Omnisci - https://www.omnisci.com
 
 
+## PostGIS commands
 
+## Create table of US voters
+- Create table partisan(id varchar(255), state varchar(255), party varchar(255), lat varchar(255), lon varchar(255));
+- Copy partisan from '/n/scratchssdlfs/cga/partisan_analysis/project_data/Script_41099709.csv' WITH (FORMAT csv);
+- update partisan set lat1 = cast(lat as double precision) ;
 
 
 
