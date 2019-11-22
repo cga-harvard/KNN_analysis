@@ -1,7 +1,7 @@
 # Nationwide Individual Partisan Clustering Analysis
 ## Introduction
 
-The CGA worked with professor Ryan Enos and graduate student Jake Brown to develope a large-scale geospatial processing and analytic capability to support an investigation into the effect of geography on partisanship in the United States which takes a new, more detailed look at the well-known phenomenon of partisan geographic sorting.  
+The CGA worked with professor Ryan Enos and graduate student Jacob Brown to develope a large-scale geospatial processing and analytic capability to support an investigation into the effect of geography on partisanship in the United States which takes a new, more detailed look at the well-known phenomenon of partisan geographic sorting.  
 
 A consensus is building among scholars that even if sorting itself is not driven by partisanship, partisans in the United States—and some other countries—are increasingly geographically segregated.  This project takes advantage of a new, individual-level, dataset to explore micro-patterns of segregation across the entire United States: a breadth of coverage and level of detail not previously possible with the study of social segregation using other groups. 
 
