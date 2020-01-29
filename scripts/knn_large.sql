@@ -1,3 +1,20 @@
+### Initial data processing
+
+Create table partisan(id varchar(255), lat double precision, lon double precision, pid varchar(255), state varchar(255), grp varchar(255));
+\copy partisan from '$location' delimiter ',' CSV HEADER ;
+                                                                                                                                     
+\copy partisan from '$location' delimiter ',' CSV HEADER ;
+                                                                                                                                     
+ALTER TABLE partisan ADD COLUMN geom geometry(Point, 4326);
+UPDATE partisan SET geom = ST_SetSRID(ST_MakePoint(lon, lat), 4326);  
+                                                                                                                                     
+Create index US_geom_gix on NY5 using gist(geom);
+CREATE INDEX nyc_census_blocks_geohash ON nyc_census_blocks (ST_GeoHash(ST_Transform(geom,4326)));
+                                                                                     
+CLUSTER NY5 nyc_census_blocks_geohash;
+                                                                                                                                     
+### KNN cacluation begin here
+
 ### Create table NY5 as (select id,pid,geom,grp from us_voters_grp where grp= 'NY5');
 
 Create table NY5 as (select id,pid,geom,grp,geohash from us_voters_grp where grp= 'NY5');
@@ -8,7 +25,7 @@ Create index NY5_gix on NY5 using gist(geom);
 
 #Create index NY5_id on NY5(id);
 
-Create index NY5_geohash on NY5(geohash);
+CREATE INDEX NYC ON nyc_census_blocks (ST_GeoHash(ST_Transform(geom,4326)));
 
 CLUSTER NY5 USING NY5_geohash;
 
