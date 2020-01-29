@@ -15,6 +15,8 @@ Create index US_geom_gix on NY5 using gist(geom);
 CREATE INDEX US_geohash ON geohash;
                                                                                      
 CLUSTER NY5 nyc_census_blocks_geohash;
+                                                      
+pg_dump -h localhost -p 7584 -Fc partisandb > /n/scratchlfs02/cga/dkakkar/partisan/partisandb.pgsql                                                      
                                                                                                                                      
 ### KNN cacluation begin here
 
