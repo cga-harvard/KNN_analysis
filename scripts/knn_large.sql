@@ -7,9 +7,12 @@ Create table partisan(id varchar(255), lat double precision, lon double precisio
                                                                                                                                      
 ALTER TABLE partisan ADD COLUMN geom geometry(Point, 4326);
 UPDATE partisan SET geom = ST_SetSRID(ST_MakePoint(lon, lat), 4326);  
+
+ALTER TABLE partisan ADD COLUMN geohash varchar(255);   
+UPDATE partisan SET geohash = ST_GeoHash(ST_Transform(geom,4326));                                                                                                                                     
                                                                                                                                      
 Create index US_geom_gix on NY5 using gist(geom);
-CREATE INDEX nyc_census_blocks_geohash ON nyc_census_blocks (ST_GeoHash(ST_Transform(geom,4326)));
+CREATE INDEX US_geohash ON geohash;
                                                                                      
 CLUSTER NY5 nyc_census_blocks_geohash;
                                                                                                                                      
