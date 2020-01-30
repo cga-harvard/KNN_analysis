@@ -2,17 +2,16 @@
 
 Create table partisan(id varchar(255), lat double precision, lon double precision, pid varchar(255), state varchar(255), grp varchar(255));
 \copy partisan from '$location' delimiter ',' CSV HEADER ;
+Create extension postgis;                                                                                                                                     
                                                                                                                                      
-\copy partisan from '$location' delimiter ',' CSV HEADER ;
                                                                                                                                      
 ALTER TABLE partisan ADD COLUMN geom geometry(Point, 4326);
-UPDATE partisan SET geom = ST_SetSRID(ST_MakePoint(lon, lat), 4326);  
-
-ALTER TABLE partisan ADD COLUMN geohash varchar(255);   
-UPDATE partisan SET geohash = ST_GeoHash(ST_Transform(geom,4326));                                                                                                                                     
+UPDATE partisan SET geom = ST_SetSRID(ST_MakePoint(lon, lat), 4326);                                                                                                                                      
                                                                                                                                      
 Create index US_geom_gix on NY5 using gist(geom);
 CREATE INDEX US_geohash ON geohash;
+                                                                                                                                     
+CREATE INDEX nyc_census_blocks_geohash ON nyc_census_blocks (ST_GeoHash(ST_Transform(geom,4326)));                                                                                                                                     
                                                                                      
 CLUSTER NY5 nyc_census_blocks_geohash;
                                                       
