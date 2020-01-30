@@ -8,8 +8,8 @@ Create extension postgis;
 ALTER TABLE partisan ADD COLUMN geom geometry(Point, 4326);
 UPDATE partisan SET geom = ST_SetSRID(ST_MakePoint(lon, lat), 4326);                                                                                                                                      
                                                                                                                                      
-Create index US_geom_gix on NY5 using gist(geom);
-CREATE INDEX US_geohash ON geohash;
+Create index US_geom_gix on partisan  using gist(geom);
+
                                                                                                                                      
 CREATE INDEX nyc_census_blocks_geohash ON nyc_census_blocks (ST_GeoHash(ST_Transform(geom,4326)));                                                                                                                                     
                                                                                      
