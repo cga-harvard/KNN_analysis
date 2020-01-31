@@ -11,9 +11,9 @@ UPDATE partisan SET geom = ST_SetSRID(ST_MakePoint(lon, lat), 4326);
 Create index US_geom_gix on partisan  using gist(geom);
 
                                                                                                                                      
-CREATE INDEX nyc_census_blocks_geohash ON nyc_census_blocks (ST_GeoHash(ST_Transform(geom,4326)));                                                                                                                                     
+CREATE INDEX us_geohash ON partisan (ST_GeoHash(ST_Transform(geom,4326)));                                                                                                                                     
                                                                                      
-CLUSTER NY5 nyc_census_blocks_geohash;
+CLUSTER NY5 us_geohash;
                                                       
 pg_dump -h localhost -p 7584 -Fc partisandb > /n/scratchlfs02/cga/dkakkar/partisan/partisandb.pgsql                                                      
                                                                                                                                      
