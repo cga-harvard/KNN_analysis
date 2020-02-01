@@ -13,7 +13,7 @@ Alter table partisan Add column row_id Serial primary key;
                                                                                                                                      
 CREATE INDEX us_geohash ON partisan (ST_GeoHash(ST_Transform(geom,4326)));                                                                                                                                     
                                                                                      
-CLUSTER NY5 us_geohash;
+CLUSTER partisan using us_geohash;
                                                       
 pg_dump -h localhost -p 7584 -Fc partisandb > /n/scratchlfs02/cga/dkakkar/partisan/partisandb.pgsql                                                      
                                                                                                                                      
