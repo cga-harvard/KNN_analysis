@@ -26,9 +26,9 @@ Alter table RI Add column row_id Serial primary key;
 
 Create index RI_gix onRI using gist(geom);
 
-CREATE INDEX RI ON nyc_census_blocks (ST_GeoHash(ST_Transform(geom,4326)));
+CREATE INDEX RI ON ri_geohash_idx (ST_GeoHash(ST_Transform(geom,4326)));
 
-CLUSTER RI USING NY5_geohash;
+CLUSTER RI USING ri_geohash_idx;
 
 Create table knn_1000_RI (source_id character varying(255), neighbor_id character varying(255),dist float);
 
