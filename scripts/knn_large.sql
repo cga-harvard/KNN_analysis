@@ -39,7 +39,7 @@ FOR counter IN 1..(Select count(*) from RI)
 LOOP
 INSERT INTO knn_1000_RI(
 SELECT a.id as source_id, b.id as neighbor_id, ST_DistanceSphere((SELECT geom FROM RI WHERE row_id = counter), b.geom) AS dist
-FROM RI a, us_voters_grp b
+FROM RI a, partisan b
 WHERE a.id <> b.id
 AND a.row_id = counter
 ORDER BY (SELECT geom FROM RI WHERE row_id = counter) <-> b.geom
