@@ -15,7 +15,7 @@ CREATE INDEX us_geohash ON partisan (ST_GeoHash(ST_Transform(geom,4326)));
                                                                                      
 CLUSTER partisan using us_geohash;
                                                       
-pg_dump -h localhost -p 7584 -Fc partisandb > /n/scratchlfs02/cga/dkakkar/partisan/partisandb.pgsql                                                      
+pg_dump -x -h localhost -p 7584 -Fc partisandb > /n/scratchlfs02/cga/dkakkar/partisan/partisandb.pgsql                                                      
                                                                                                                                      
 ### KNN cacluation begin here
 
